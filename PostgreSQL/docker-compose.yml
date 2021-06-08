@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  pgsql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custom-pgsql
+    container_name: custom-pgsql
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    logging:
+      driver: local
+    healthcheck:
+      test: ["CMD", "netstat", "-a", "-p", "TCP", "-nl", "|", "grep", "0.0.0.0:5432"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      mode: global
+      replicas: 1
+
